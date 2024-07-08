@@ -1,0 +1,28 @@
+name: one hot encoding
+
+text:
+	length
+	ratio of spl symbols to alphabets
+	no of html tags words: GOOD TO HAVE
+
+attribute:
+			no of attributes / length
+			expand it and then one hot encoding
+
+class value
+			: one hot encoding		
+
+id value
+			: one hot encoding
+
+
+parents_no: use at it is
+
+parents_names: convert to integer one hot encoding ==> sequence of integers
+
+
+####################################################
+label 5/10 docs
+Try classification model first
+on second iteration give sequence models a try e.g. CRF
+

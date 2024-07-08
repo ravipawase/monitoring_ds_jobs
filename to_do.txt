@@ -1,0 +1,4 @@
+1. Add logs to scape_jobs.py
+    add tqdm
+    add inner logs
+2. Read about applying NLP to HTML text
