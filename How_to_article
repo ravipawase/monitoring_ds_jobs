@@ -2,6 +2,11 @@
 1.  Based on the following article install chrome
     https://towardsdatascience.com/how-to-setup-selenium-on-a-linux-vm-cd19ee47d922
 
+    libconfig issue
+        https://github.com/keybase/client/issues/25984
+         rsyring comment
+
+
 2.  Check the version of the chrome and download the same version of the chromedriver
     https://sites.google.com/chromium.org/driver/home
     https://googlechromelabs.github.io/chrome-for-testing/
