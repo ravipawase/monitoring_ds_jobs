@@ -1,4 +1,3 @@
-import cachetools.func
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
@@ -7,7 +6,7 @@ import pandas as pd
 from urllib.parse import urljoin
 
 
-@cachetools.func.ttl_cache(maxsize=128, ttl=24 * 3600)
+# @cachetools.func.ttl_cache(maxsize=128, ttl=24 * 3600)
 def get_soup_from_url(in_url, in_service, in_options):
     with webdriver.Chrome(service=in_service, options=in_options) as driver:
         driver.get(in_url)
@@ -29,7 +28,8 @@ def get_service_and_options_for_chromedriver():
     options.add_argument("--headless=new")
     options.add_argument("--window-size=%s" % WINDOW_SIZE)
     options.add_argument('--no-sandbox')
-    user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
+    # user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
+    user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
     options.add_argument('user-agent={0}'.format(user_agent))
     return service, options
 
@@ -62,8 +62,10 @@ def get_urls_of_subsequent_pages(in_page_soup, parent_url):
 
 
 def get_all_tags(in_page_soup):
-    names, texts, attributes, class_value_list, id_value_list, no_of_parents_list, parents_names_list, = [], [], [], [], [], [], []
+    names, texts, attributes, class_value_list, id_value_list, no_of_parents_list, parents_names_list, \
+    parents_class_list = [], [], [], [], [], [], [], []
     for tag in in_page_soup.find_all():
+
         if (len(tag.find_all()) == 0 and tag.name != "script") or tag.name == 'p':
             # print(tag)
             names.append(tag.name)
@@ -95,20 +97,36 @@ def get_all_tags(in_page_soup):
             class_value_list.append(class_value)
             id_value_list.append(id_value)
             # att_values.append(",".join(list(unpack_uneven_list_of_list(list(tag.attrs.values())))))
-            no_of_parents, parents_names = get_parents_details(tag)
+            no_of_parents, parents_names, parents_class  = get_parents_details(tag)
+            print()
             no_of_parents_list.append(no_of_parents)
             parents_names_list.append(parents_names)
+            parents_class_list.append(parents_class)
 
     temp_df = pd.DataFrame(data={'name': names, "text": texts, "attribute": attributes, "class_value": class_value_list,
                                  "id_value" : id_value_list, "parents_no": no_of_parents_list,
-                                 "parents_names": parents_names_list})
+                                 "parents_names": parents_names_list, "parents_class":parents_class_list})
     return temp_df
 
 
 def get_parents_details(input_tag):
     no_of_parents = len(input_tag.find_parents())
     parents_names = [parent.name for parent in input_tag.find_parents()]
-    return no_of_parents, ",".join(parents_names)
+    class_values = []
+    for parent in input_tag.find_parents():
+        print(parent)
+        att_names = list(parent.attrs.keys())
+        att_values = list(parent.attrs.values())
+        if 'class' in att_names:
+            try:
+                class_value = att_values[att_names.index('class')][0]
+            except:
+                class_value = "class_absent"
+        else:
+            class_value = "class_absent"
+        class_values.append(class_value)
+    return no_of_parents, ",".join(parents_names), ",".join(class_values)
+    # return no_of_parents, ",".join(parents_names)
 
 
 def unpack_uneven_list_of_list(input_list):

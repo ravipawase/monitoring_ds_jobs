@@ -116,8 +116,8 @@ class HashNStack(BaseEstimator, TransformerMixin):
     def transform(self, X):
         X_transformed = X.copy()
         hashed_stack = hash_and_stack(X_transformed)
-        # self.no_of_elements = hashed_stack.shape[0]
+        self.no_of_elements = hashed_stack.shape[1]
         return hashed_stack
 
     def get_feature_names_out(self, X):
-        return [self.feature_name + "_" + str(element + 1) for element in range(0, X.shape[0])]
+        return [self.feature_name + "_" + str(element + 1) for element in range(0, self.no_of_elements)]

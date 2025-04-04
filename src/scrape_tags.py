@@ -14,6 +14,7 @@ search_result_page_soup = get_soup_from_url(main_url_to_scrape, service, options
 urls_to_scrape.append(main_url_to_scrape)
 subsequent_pages_urls = get_urls_of_subsequent_pages(search_result_page_soup, main_url_to_scrape)
 urls_to_scrape.extend(subsequent_pages_urls)
+# urls_to_scrape.append('https://www.naukri.com/job-listings-pyspark-developer-iqvia-bengaluru-9-to-14-years-290824000022?src=drecomm_dashboard_profile')
 
 scraped_job_ids = get_already_scraped_job_ids(index_file_path)
 curr_job_ids = []
@@ -34,8 +35,16 @@ for url in tqdm(urls_to_scrape):
             job_details_url_soup = get_soup_from_url(job_details_url, service, options)
             curr_df = get_all_tags(job_details_url_soup)
 
+            # temp_df = pd.DataFrame(
+            #     data={'name': names, "text": texts, "attribute": attributes, "class_value": class_value_list,
+            #           "id_value": id_value_list, "parents_no": no_of_parents_list,
+            #           "parents_names": parents_names_list, "parents_class": parents_class_list})
+            # return temp_df
+
+
             url_df = pd.DataFrame(data={'name': ["url of page"], "text": [job_details_url], "attribute": [""],
-                                        "att_values": [""], "parents_no": [""], "parents_names": [""]})
+                                        "class_value": [""],  "id_value": [""], "parents_no": [""], "parents_names": [""],
+                                         "parents_class": [""] })
             final_df = curr_df._append(url_df, ignore_index=True)
 
             out_file_path = Path(output_folder).joinpath(title + "_" + str(job_id) + ".xlsx")
